@@ -39,7 +39,7 @@ NOTE - There is a custom script to generate IP of POD (acting as IPAM), which st
 
 [![CNI-config.png](https://github.com/ronak-agarwal/custom-cni/blob/master/images/CNI-config.png)]()
 
-5. Initial k8s cluster using
+5. Initiate k8s cluster setup on master using kubeadm
 
 kubeadm init --pod-network-cidr=10.240.0.0/24 (Note this CIDR range is same which is configured in conf file /24 range )
 
