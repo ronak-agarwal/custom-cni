@@ -48,6 +48,7 @@ kubeadm init --pod-network-cidr=10.240.0.0/24 (Note this CIDR range is same whic
 6. ADD static iptable rules to enable Pod to Pod communication (even on same host)
 
 iptables -A FORWARD -s 10.240.0.0/16 -j ACCEPT
+
 iptables -A FORWARD -d 10.240.0.0/16 -j ACCEPT
 
 7. ADD route to Allow communication across hosts
