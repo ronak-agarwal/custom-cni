@@ -57,3 +57,8 @@ ip route add 10.240.1.0/24 via 10.10.10.11 dev enp0s3
 8. Allow outgoing internet from Pods by adding NAT rule in iptables
 
 iptables -t nat -A POSTROUTING -s 10.240.0.0/24 ! -o cni0 -j MASQUERADE
+
+
+## Other links
+
+I did a similar work here which is confined to only container network - https://github.com/ronak-agarwal/rocker
