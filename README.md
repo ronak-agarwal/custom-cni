@@ -13,7 +13,7 @@ yum -y install jq
 
 yum -y install bridge-utils
 
-3. Copy custom-cni to /
+3. Copy custom-cni to /opt/cni/bin/custom-cni
 
 
 Typically any CNI script has ADD / DEL verbs
@@ -35,7 +35,7 @@ You can see CNI logs as configured in the script at this place => /var/log/cni.l
 
 NOTE - There is a custom script to generate IP of POD (acting as IPAM), which stores a file in /tmp/ and increment by +1 everytime pod is created
 
-4. Copy 10-custom-cni.conf to /
+4. Copy 10-custom-cni.conf to /etc/cni/net.d/10-custom-cni.conf
 
 
 5. Initial k8s cluster using
