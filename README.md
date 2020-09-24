@@ -37,6 +37,7 @@ NOTE - There is a custom script to generate IP of POD (acting as IPAM), which st
 
 4. Copy 10-custom-cni.conf to /etc/cni/net.d/10-custom-cni.conf
 
+[![CNI-config.png](https://github.com/ronak-agarwal/VMWare-lab/blob/master/images/deployment.png)]()
 
 5. Initial k8s cluster using
 
