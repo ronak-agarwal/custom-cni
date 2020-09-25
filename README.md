@@ -84,7 +84,7 @@ Node1 (10.240.1.0/24)
 Node2 (10.240.0.0/24)
 ```
 
-### Before trying below deploy 3 pods
+### Packet Flow Between Pods
 
 This is to show packet flow (actual data) from Pod to Pod (on same host and different hosts)
 
