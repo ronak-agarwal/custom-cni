@@ -2,18 +2,48 @@
 
 You can write your custom CNI plugin for k8s
 
-## Steps to setup
+## Prerequisite
 
-1. Create k8s 2 node cluster (using Centos7 minimal), you can use kubeadm init.
+Create VM snapshot (using Centos7 minimal) which has below binaries and configs.
 
-2. Install jq and bridge-utils on centos
+```hcl
+Install jq and bridge-utils on centos
 
 yum -y install https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
 yum -y install jq
 
-yum -y install bridge-utils
+yum -y install bridge-utils wget
 
-3. Copy custom-cni to /opt/cni/bin/custom-cni
+systemctl disable firewalld && systemctl stop firewalld
+/etc/selinux/config
+SELINUX=permissive
+
+Configure repo
+
+cat <<EOF > /etc/yum.repos.d/kubernetes.repo
+[kubernetes]
+name=Kubernetes
+baseurl=http://yum.kubernetes.io/repos/kubernetes-el7-x86_64
+enabled=1
+gpgcheck=1
+repo_gpgcheck=1
+gpgkey=https://packages.cloud.google.com/yum/doc/yum-key.gpg
+       https://packages.cloud.google.com/yum/doc/rpm-package-key.gpg
+EOF
+
+yum install -y docker kubelet kubeadm kubectl kubenetes-cni
+
+systemctl enable docker && systemctl start docker
+systemctl enable kubelet && systemctl start kubelet
+
+sysctl -w net.bridge.bridge-nf-call-iptables=1
+echo "net.bridge.bridge-nf-call-iptables=1" > /etc/sysctl.d/k8s.conf
+swapoff -a && sed -i '/ swap / s/^/#/' /etc/fstab
+```
+
+### Below steps are repeated for every node
+
+1. Copy custom-cni to /opt/cni/bin/custom-cni
 
 
 Typically any CNI script has ADD / DEL verbs
@@ -35,15 +65,15 @@ You can see CNI logs as configured in the script at this place => /var/log/cni.l
 
 NOTE - There is a custom script to generate IP of POD (acting as IPAM), which stores a file in /tmp/ and increment by +1 everytime pod is created
 
-### Below steps are repeated for every node
 
-4. Copy 10-custom-cni.conf to /etc/cni/net.d/10-custom-cni.conf
+
+2. Copy 10-custom-cni.conf to /etc/cni/net.d/10-custom-cni.conf
 
 Change pod cidr range on every node (Eg Node1 = 10.240.0.0/24 , Node2 = 10.240.1.0/24)
 
 [![CNI-config.png](https://github.com/ronak-agarwal/custom-cni/blob/master/images/CNI-config.png)]()
 
-5. Initiate k8s cluster setup on master using kubeadm
+3. Initiate k8s cluster setup on master using kubeadm
 
 kubeadm init --pod-network-cidr=10.240.0.0/24 (Note this Pod CIDR range is for entire cluster and should cover node specific pod CIDR range configured in 10-custom-cni.conf file /24 range )
 
@@ -62,7 +92,7 @@ two pods will land on Node2 (alpine and nginx1)
 one pod will land on Node1 (nginx2)
 ```
 
-6. ADD static iptable rules to enable Pod to Pod communication (on same host)
+4. ADD static iptable rules to enable Pod to Pod communication (on same host)
 
 Eg - Add On Node2
 
@@ -83,7 +113,7 @@ iptables -A FORWARD -s 10.240.1.0/24 -j ACCEPT  (/24 entire node pod cidr)
 iptables -A FORWARD -d 10.240.1.0/24 -j ACCEPT
 ```
 
-7. ADD route to Allow communication across hosts
+5. ADD route to Allow communication across hosts
 ```hcl
 ip route add 10.240.1.0/24 via 10.0.2.14 dev enp0s3 (add in Node2)
 ```
@@ -95,7 +125,7 @@ ip route add 10.240.0.0/24 via 10.0.2.15 dev enp0s3 (add in Node1)
 Route any packet for node2 podcidr (10.240.0.0/24) to node2 ip via device enp0
 
 
-8. Allow outgoing internet from Pods by adding NAT rule in iptables
+6. Allow outgoing internet from Pods by adding NAT rule in iptables
 
 On Node2
 ```hcl
