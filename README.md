@@ -87,6 +87,8 @@ Node1 (10.240.1.0/24)
 Node2 (10.240.0.0/24)
 ```
 
+[![Setup.png](https://github.com/ronak-agarwal/custom-cni/blob/master/images/Setup.png)]()
+
 ### Packet Flow Between Pods
 
 This is to show packet flow (actual data) from Pod to Pod (on same host and different hosts)
@@ -99,6 +101,8 @@ one pod will land on Node1 (nginx2)
 ```
 
 4. ADD static iptable rules to enable Pod to Pod communication (on same host)
+
+[![SameHost.png](https://github.com/ronak-agarwal/custom-cni/blob/master/images/SameHost.png)]()
 
 Eg - Add On Node2
 
@@ -120,6 +124,9 @@ iptables -A FORWARD -d 10.240.1.0/24 -j ACCEPT
 ```
 
 5. ADD route to Allow communication across hosts
+
+[![DifferentHost.png](https://github.com/ronak-agarwal/custom-cni/blob/master/images/DifferentHost.png)]()
+
 ```hcl
 ip route add 10.240.1.0/24 via 10.0.2.14 dev enp0s3 (add in Node2)
 ```
