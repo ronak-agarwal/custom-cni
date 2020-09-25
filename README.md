@@ -45,8 +45,9 @@ swapoff -a && sed -i '/ swap / s/^/#/' /etc/fstab
 
 1. Copy custom-cni to /opt/cni/bin/custom-cni
 
-
 Typically any CNI script has ADD / DEL verbs
+
+Below script is to create veth on host for every pod and assign Pod IPs based on Pod CIDR range of each node and link that to a virtual bridge
 
 Script contains -
 
@@ -84,6 +85,8 @@ Node2 (10.240.0.0/24)
 ```
 
 ### Before trying below deploy 3 pods
+
+This is to show packet flow (actual data) from Pod to Pod (on same host and different hosts)
 
 ```hcl
 kubectl apply -f pods.yaml
