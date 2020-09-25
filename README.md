@@ -1,6 +1,9 @@
 # custom-cni
 
-You can write your custom CNI plugin for k8s
+You can write your custom CNI plugin for k8s -
+
+Every CNI has usually a binary and a daemon, binary - create Pod NIC and act as IPAM, where as daemon - adds routing / iptables rules on host to manage pod-pod communication
+
 
 ## Prerequisite
 
