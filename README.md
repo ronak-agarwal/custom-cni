@@ -167,6 +167,16 @@ kubectl label pods nginx2 app=nginx2
 kubectl expose pod nginx2 --name=nginx2 --port=8000 --target-port=80
 ```
 
+### Some commands
+
+```hcl
+iptables -S FORWARD (to see FORWARD chain)
+iptables -t nat -L KUBE-SERVICES (to see kube-proxy -s and -d nating)
+
+Using tshark to see source and destination of packet along with protocol
+tshark -i cni0 -T fields -e ip.src -e ip.dst -e frame.protocols -E header=y
+```
+
 ## Other links
 
 I did similar work here which is confined to only container network - https://github.com/ronak-agarwal/rocker
