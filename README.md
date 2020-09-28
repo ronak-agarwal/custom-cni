@@ -182,3 +182,5 @@ tshark -i cni0 -T fields -e ip.src -e ip.dst -e frame.protocols -E header=y
 I did similar work here which is confined to only container network - https://github.com/ronak-agarwal/rocker
 
 Setup k8s on Centos7 - https://medium.com/@genekuo/setting-up-a-multi-node-kubernetes-cluster-on-a-laptop-69ae3e3d0f7c
+
+https://github.com/kristenjacobs/container-networking
