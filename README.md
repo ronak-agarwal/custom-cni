@@ -162,7 +162,10 @@ kubectl exec alpine1 -- ping 8.8.8.8 (Assuming alpine pod running on node2)
 
 Kubernetes Services are not part of CNI plugin and managed natively via kube-proxy so if Pod to Pod communication sorted then Services > Pod communication just work straight away, below Service IP will be reachable from both Nodes (Hosts / Pods)
 
+```hcl
+kubectl label pods nginx2 app=nginx2
 kubectl expose pod nginx2 --name=nginx2 --port=8000 --target-port=80
+```
 
 ## Other links
 
