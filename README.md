@@ -107,6 +107,8 @@ one pod will land on Node1 (nginx2)
 Eg - Add On Node2
 
 ```hcl
+eth0 (in Pod A’s netns) → vethA → br0 → vethB → eth0 (in Pod B’s netns)
+
 iptables -A FORWARD -s 10.240.0.0/24 -j ACCEPT  (/24 entire node pod cidr)
 
 iptables -A FORWARD -d 10.240.0.0/24 -j ACCEPT
@@ -128,6 +130,9 @@ iptables -A FORWARD -d 10.240.1.0/24 -j ACCEPT
 [![DifferentHost.png](https://github.com/ronak-agarwal/custom-cni/blob/master/images/DifferentHost.png)]()
 
 ```hcl
+Ideal flow from CNI plugin, since I don't have vxlan (IPIP overlay) so I have used ip routes  
+eth0 (in Pod A’s netns) → vethA → br0 → vxlan0 → network [1] → vxlan0 → br0 → vethB → eth0 (in Pod B’s netns)
+
 ip route add 10.240.1.0/24 via 10.0.2.14 dev enp0s3 (add in Node2)
 ```
 Route any packet for node1 podcidr (10.240.1.0/24) to node1 ip via device enp0
@@ -142,6 +147,9 @@ Route any packet for node2 podcidr (10.240.0.0/24) to node2 ip via device enp0
 
 On Node2
 ```hcl
+Below is the flow from Pod A to get Internet, so I have added POSTROUTING nat rule
+eth0 (in Pod A’s netns) → vethA → br0 → (NAT) → eth0 (physical device) → Internet
+
 iptables -t nat -A POSTROUTING -s 10.240.0.0/24 ! -o cni0 -j MASQUERADE
 ```
 Add in POSTROUTING chain (last chain) to evaluate outgoing packet, and need to add in linux NAT table and making sure only those packet which are not going out to cni bridge
