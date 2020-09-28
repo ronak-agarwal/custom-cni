@@ -131,7 +131,7 @@ iptables -A FORWARD -d 10.240.1.0/24 -j ACCEPT
 
 ```hcl
 Ideal flow from CNI plugin, since I don't have vxlan (IPIP encapsulation) so I have used ip routes  
-eth0 (in Pod A’s netns) → vethA → br0 → vxlan0 → network [1] → vxlan0 → br0 → vethB → eth0 (in Pod C’s netns)
+eth0 (in Pod A’s netns) → vethA → br0 → vxlan0 → physical network [underlay] → vxlan0 → br0 → vethB → eth0 (in Pod C’s netns)
 
 ip route add 10.240.1.0/24 via 10.0.2.14 dev enp0s3 (add in Node2)
 ```
