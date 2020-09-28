@@ -130,7 +130,7 @@ iptables -A FORWARD -d 10.240.1.0/24 -j ACCEPT
 [![DifferentHost.png](https://github.com/ronak-agarwal/custom-cni/blob/master/images/DifferentHost.png)]()
 
 ```hcl
-Ideal flow from CNI plugin, since I don't have vxlan (IPIP encapsulation) so I have used ip routes  
+Ideal flow from CNI plugin, since I don't have vxlan (IPIP encapsulation) so I have used sourcenet (MASQUERADE) which does same thing  
 eth0 (in Pod A’s netns) → vethA → br0 → vxlan0 → physical network [underlay] → vxlan0 → br0 → vethB → eth0 (in Pod C’s netns)
 
 ip route add 10.240.1.0/24 via 10.0.2.14 dev enp0s3 (add in Node2)
@@ -157,6 +157,12 @@ Add in POSTROUTING chain (last chain) to evaluate outgoing packet, and need to a
 MASQUERADE meaning apply to source net (replace source IP with host IP)
 
 kubectl exec alpine1 -- ping 8.8.8.8 (Assuming alpine pod running on node2)
+
+## K8S Services
+
+Kubernetes Services are not part of CNI plugin and managed natively via kube-proxy so if Pod to Pod communication sorted then Services > Pod communication just work straight away, below Service IP will be reachable from both Nodes (Hosts / Pods)
+
+kubectl expose pod nginx2 --name=nginx2 --port=8000 --target-port=80
 
 ## Other links
 
