@@ -177,6 +177,37 @@ Using tshark to see source and destination of packet along with protocol
 tshark -i cni0 -T fields -e ip.src -e ip.dst -e frame.protocols -E header=y
 ```
 
+### CNI Commands to add network veth and IPs using existing CNI binaries
+
+For ptp binary and using host-local IPAM
+
+```hcl
+
+ip netns add demo (Create a network namespace on your host)
+
+When you install kubernetes-cni YUM package it adds lots of default CNI binaries at this location /opt/cni/bin/ . So for this example I copied ptp and host-local to /root/cni/ and created a config file for my CNI plugin
+
+/root/cni/conf << EOF
+{
+    "cniVersion": "0.4.0",
+    "name": "democni",
+    "type": "ptp",
+    "ipam": {
+       "type": "host-local",
+       "subnet": "10.20.0.0/24"
+    }
+}
+EOF
+
+Run below commands and watch route in demo netns using exec command (ip netns exec demo route -n)
+
+CNI_COMMAND=VERSION ./ptp < conf  (To find CNI versions supported by binary)
+
+CNI_COMMAND=ADD CNI_NETNS=/var/run/netns/demo CNI_IFNAME=demoeth0 CNI_PATH=/root/cni CNI_CONTAINERID=12345678 ./ptp < conf
+
+CNI_COMMAND=DEL CNI_NETNS=/var/run/netns/demo CNI_IFNAME=demoeth0 CNI_PATH=/root/cni CNI_CONTAINERID=12345678 ./ptp < conf
+```
+
 ## Other links
 
 I did similar work here which is confined to only container network - https://github.com/ronak-agarwal/rocker
