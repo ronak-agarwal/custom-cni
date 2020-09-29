@@ -134,11 +134,20 @@ Ideal flow from CNI plugin, since I don't have vxlan (IPIP encapsulation) so I h
 eth0 (in Pod A’s netns) → vethA → br0 → vxlan0 → physical network [underlay] → vxlan0 → br0 → vethB → eth0 (in Pod C’s netns)
 
 ip route add 10.240.1.0/24 via 10.0.2.14 dev enp0s3 (add in Node2)
+
+Above command is good for baremetal / local VMs (VBox), but for Cloud Providers like GCP you need to setup custom routes at Layer2
+
+gcloud compute routes create k8s-node2 --destination-range 10.240.1.0/24 --network k8s --next-hop-address 10.0.2.14
+
+Similarly Azure has User Defined Routes and AWS has Route Tables 
 ```
 Route any packet for node1 podcidr (10.240.1.0/24) to node1 ip via device enp0
 
 ```hcl
 ip route add 10.240.0.0/24 via 10.0.2.15 dev enp0s3 (add in Node1)
+
+On GCP
+gcloud compute routes create k8s-node1 --destination-range 10.240.0.0/24 --network k8s --next-hop-address 10.0.2.15
 ```
 Route any packet for node2 podcidr (10.240.0.0/24) to node2 ip via device enp0
 
@@ -213,5 +222,9 @@ CNI_COMMAND=DEL CNI_NETNS=/var/run/netns/demo CNI_IFNAME=demoeth0 CNI_PATH=/root
 I did similar work here which is confined to only container network - https://github.com/ronak-agarwal/rocker
 
 Setup k8s on Centos7 - https://medium.com/@genekuo/setting-up-a-multi-node-kubernetes-cluster-on-a-laptop-69ae3e3d0f7c
+
+https://events19.linuxfoundation.org/wp-content/uploads/2018/07/Packet_Walks_In_Kubernetes-v4.pdf
+
+https://www.stackrox.com/post/2020/01/kubernetes-networking-demystified/
 
 https://github.com/kristenjacobs/container-networking
