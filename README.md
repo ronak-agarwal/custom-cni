@@ -139,7 +139,7 @@ Above command is good for baremetal / local VMs (VBox), but for Cloud Providers 
 
 gcloud compute routes create k8s-node2 --destination-range 10.240.1.0/24 --network k8s --next-hop-address 10.0.2.14
 
-Similarly Azure has User Defined Routes and AWS has Route Tables 
+Similarly Azure has User Defined Routes and AWS has Route Tables
 ```
 Route any packet for node1 podcidr (10.240.1.0/24) to node1 ip via device enp0
 
@@ -151,6 +151,9 @@ gcloud compute routes create k8s-node1 --destination-range 10.240.0.0/24 --netwo
 ```
 Route any packet for node2 podcidr (10.240.0.0/24) to node2 ip via device enp0
 
+### GCP cross hosts
+
+[![DifferentHost.png](https://github.com/ronak-agarwal/custom-cni/blob/master/images/GCP-InterHost.png)]()
 
 6. Allow outgoing internet from Pods by adding NAT rule in iptables
 
